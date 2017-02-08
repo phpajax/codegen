@@ -1,15 +1,5 @@
 <?
-	class code{
-/*
-$the_breath_of_life = @be() or !toBe(); 
-смысл жизни 42
-
-use happyness;
-use goodMood;
-
-$x = 3 + '15%' + "$25"
-	echo 2 + '2e3';
-*/
+	class codegen{
 		var $version = 0.01;
 		var $name_separator = '_';
 		var $current_args, $current_comment;
