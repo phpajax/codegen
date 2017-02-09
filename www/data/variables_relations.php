@@ -42,7 +42,7 @@
 		'object^integer' => ['{c} -> name = {d}', '{c} -> value += {d}'],
 		'object^boolean' => ['{c} -> value = {d}', '{c} -> name = {d}'],
 		'object^array' => ['{c} -> name = {d}["name"]', '{c} -> value = {d}["value"]'],
-		'object^object' => ['{c} -> name = {d} -> name', '{c} -> value = {d} -> value'],
+		'object^object' => ['{c} = {d} -> parent', '{c} = {d} -> value'],
 	];
 
 	$variables_relations['double^double'] = $variables_relations['integer^integer'];
@@ -56,4 +56,5 @@
 	$variables_relations['string^double'] = $variables_relations['string^integer'];
 	$variables_relations['boolean^double'] = $variables_relations['boolean^integer'];
 	$variables_relations['array^double'] = $variables_relations['array^integer'];
+	$variables_relations['object^double'] = $variables_relations['object^integer'];
 ?>
