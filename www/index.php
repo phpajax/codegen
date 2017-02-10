@@ -1,4 +1,5 @@
 <?
+	error_reporting(E_ALL);
 	include 'classes/codegen.php';
 
 	include 'data/key_words.php';

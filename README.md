@@ -17,3 +17,6 @@
 	$codegen = new codegen;
 	echo $codegen -> generate();
 </pre>
+
+### How to try it fast?
+go to: http://codegen.exd-inc.ru/

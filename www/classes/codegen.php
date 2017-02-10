@@ -1,10 +1,11 @@
 <?
 	class codegen{
-		var $version = 0.01;
-		/** @var string separator */
+		/** @var double version */
+		var $version = 0.02;
+		/** @var string name_separator */
 		var $name_separator = '_';
-		/** @var array current values */
-		var $current_args, $current_vars, $current_comment;
+		/** @var array variables */
+		var $variables = [];
 
 
 
@@ -39,11 +40,21 @@
 		/**
 		 * @param string $type
 		 * @param int $case to format_name()
+		 * @param array $vars - to check free name
 		 * @return string
 		*/
-		public function generate_name($type, $case = 0){
+		public function generate_name($type, $case = 0, $vars = null){
 			if(isset($this -> key_words[$type])){
-				return $this -> format_name($this -> key_words[$type][mt_rand(0, count($this -> key_words[$type]) - 1)], $case);
+				$name = $this -> format_name($this -> key_words[$type][mt_rand(0, count($this -> key_words[$type]) - 1)], $case);
+				if($vars){
+					foreach($vars as $var){
+						if($var['name'] == $name){
+							return $this -> generate_name($type, $case, $vars);
+						}
+					}
+				}
+
+				return $name;
 			}
 
 			return trigger_error('generate_name_error');
@@ -101,74 +112,100 @@
 
 		// functions
 		/**
-		 * @return string arguments
+		 * @param int $mode of function
+		 * 1 - args
+		 * 2 - arr
+		 * 3 - obj
+		 * @return string code
 		 */
-		public function generate_function_arguments(){
-			if($this -> current_args){
+		public function generate_function($mode = 0){
+			$mode = $mode ? $mode : mt_rand(1, 3);
+			$code = '';
+			$args = [];
+			$name = $this -> format_name($this -> generate_name('sections') . $this -> name_separator . $this -> generate_name('method') . $this -> name_separator . $this -> generate_name('title'), 2);
+
+
+
+			if($mode == 1){ // args mode
+				$count = mt_rand(1, 4);
+
+				for($i = 0; $i <= $count; $i ++){
+					$args[] = $this -> generate_variable($this -> generate_name('type'));
+				}
+			}
+			else if($mode == 2){ // arr mode
+				$args[] = $this -> generate_variable('arr');
+			}
+			else if($mode == 3){ // obj mode
+				$args[] = $this -> generate_variable('obj');
+			}
+
+
+			// function arguments
+			$arguments = '';
+			if($args){
 				$tmp = [];
 
-				foreach($this -> current_args as $arg){
+				foreach($args as $arg){
 					$tmp[$arg['name']] = $arg['type'] . ' $' . $arg['name'];
 
 					if($arg['value'] != 300){
+						if($arg['type'] == 'string'){
+							$arg['value'] = '"' . $arg['value'] . '"';
+						}
+
 						$tmp[$arg['name']] .= ' = ' . $arg['value'];
 					}
 				}
 
-				return implode(', ', $tmp);
+				$arguments = implode(', ', $tmp);
 			}
 
-			return '';
-		}
 
-		/**
-		 * @return string code
-		 */
-		public function generate_function_body(){
-			$code = '';
 
-			// inner variables
-			$variables = []; // name => type
+
+			// function variables
+			$variables = [];
 			$var_types = ['result', 'content'];
 			$new = mt_rand(1, 5);
 			if($new){
-				$new = $new < count($this -> current_args) ? count($this -> current_args) : $new;
+				$new = $new < count($args) ? count($args) : $new;
 
 				for($i = 0; $i < $new; $i ++){
-					$variables[] = $this -> generate_variable($this -> generate_name($var_types[mt_rand(0, count($var_types) - 1)]));
-
-					// declaration of variables
-					// $code .= holly
+					$variables[] = $this -> generate_variable($this -> generate_name($var_types[mt_rand(0, count($var_types) - 1)], 0, $variables));
 				}
+			}
+
+			// class variables inserting
+			foreach($this -> variables as $var){
+				$var['name'] = 'this -> ' . $var['name'];
+				$variables[] = $var;
 			}
 
 
 
-
-			// $types = array_map(function($n){return gettype($n);}, array_values($args));
-
 			// relations args with variables
-			$count_args = count($this -> current_args);
+			$count_args = count($args);
 			$count_variables = count($variables);
 			$last = 0;
 
 
-			// make header
-			$this -> current_comment .= 'args: ' . $count_args;
+			// make PHPDOC
+			$doc = '';
 			for($i = 0; $i < $count_args; $i ++){
-				$this -> current_comment .= PHP_EOL . '$' . $this -> current_args[$i]['name'] . ' (' . $this -> current_args[$i]['type'] . ')';
+				$doc .= PHP_EOL . '* @param ' . $args[$i]['type'] . ' $' . $args[$i]['name'];
 			}
-			$this -> current_comment .= PHP_EOL . PHP_EOL . 'vars: ' . $count_variables;
+		//	$doc .= PHP_EOL . PHP_EOL;
 			for($i = 0; $i < $count_variables; $i ++){
-				$this -> current_comment .= PHP_EOL . '$' . $variables[$i]['name'] . ' (' . $variables[$i]['type'] . ')';
+				$doc .= PHP_EOL . '* @var ' . $variables[$i]['type'] . ' $' . $variables[$i]['name'];
 			}
-
+			$doc .= PHP_EOL . '* @return ' . $variables[$count_variables - 1]['type'] . ' $' . $variables[$count_variables - 1]['name'];
 
 
 
 			// relations args with variables
 			for($i = 0; $i < $count_args; $i ++){
-				$code .= $this -> generate_variables_relations($variables[$i], $this -> current_args[$i]);
+				$code .= $this -> generate_variables_relations($variables[$i], $args[$i]);
 			}
 
 			// relations variables with variables
@@ -183,65 +220,52 @@
 			// $value = mt_rand(0, 1) ? $this -> generate_random_string() : mt_rand(0, 999999);
 			// $code = '"return ' . $value . '";';
 
-			return $code;
-		}
-
-		/**
-		 * @param int $type of function
-		 * @return string code
-		 */
-		public function generate_function($type = 0){
-			$name = $this -> format_name($this -> generate_name('sections') . $this -> name_separator . $this -> generate_name('method') . $this -> name_separator . $this -> generate_name('title'), 2);
-
-			$type = $type ? $type : mt_rand(1, 3);
-			$this -> current_args = [];
-			$this -> current_comment = '';
-
-			if($type == 1){ // args mode
-				$count = mt_rand(1, 4);
-
-				for($i = 0; $i <= $count; $i ++){
-					$this -> current_args[] = $this -> generate_variable($this -> generate_name('type'));
-				}
-			}
-			else if($type == 2){ // arr mode
-				$this -> current_args[] = $this -> generate_variable('arr');
-			}
-			else if($type == 3){ // obj mode
-				$this -> current_args[] = $this -> generate_variable('obj');
-			}
 
 
-			$body = $this -> generate_function_body();
-			$args = $this -> generate_function_arguments();
-
-
-			$code = '/*' . PHP_EOL . $this -> current_comment . PHP_EOL . '*/' . PHP_EOL . PHP_EOL . 'function ' . $name . '(' . $args . '){' . $body . PHP_EOL . '}';
+			$code = PHP_EOL . '/**' . $doc . PHP_EOL . '*/' . 'function ' . $name . '(' . $arguments . '){' . $code . PHP_EOL . '}';
 
 			return $code;
 		}
 
-		public function generate_class_method(){
-
-		}
 
 
 		// classes
 		public function generate_class(){
 			$name = $this -> format_name($this -> generate_name('globals') . $this -> name_separator . $this -> generate_name('sections'), 2);
-			$code = 'class ' . $name . '{';
+
+			$code = '/** @class ' . $name . ' generated by codegen v' . $this -> version . ' */';
+			$code .= 'class ' . $name . '{';
 
 			// vars of class
-			$this -> current_vars = [];
-			$new = mt_rand(1, 5);
+			$new = mt_rand(2, 5);
 			for($i = 0; $i < $new; $i ++){
-				$this -> current_vars[] = $this -> generate_variable($this -> generate_name('content'));
+				$this -> variables[] = $this -> generate_variable($this -> generate_name('content', 0, $this -> variables));
 			}
-//var_dump($this -> current_vars); die;
 
+
+			$get_quotes = function($var){
+				if($var['type'] == 'string'){
+					$var['value'] = '"' . $var['value'] . '"';
+				}
+				else if($var['value'] == 300){
+					return null;
+				}
+
+				return  ' = ' . $var['value'];
+			};
 			// declaration of variables
-			foreach($this -> current_vars as $k => $v){
-			//	$code .= PHP_EOL . 'var $' . $k . ' = ' . $v;
+			foreach($this -> variables as $var){
+				$code .= PHP_EOL . '/** $var ' . $var['type'] . ' ' . $var['name'] . ' */';
+				$code .= 'var $' . $var['name'] . $get_quotes($var) . ';';
+			}
+
+			$code .= PHP_EOL . PHP_EOL;
+
+			// methods of class
+			$code .= $this -> generate_function(3);
+			$new = mt_rand(2, 4);
+			for($i = 0; $i < $new; $i ++){
+				$code .= $this -> generate_function();
 			}
 
 			return $code . '}';
@@ -263,20 +287,19 @@
 			for($i = 0; $i < $length; $i ++){
 				$pre = $fin = '';
 
-				if($code[$i] == ';'){
+				if($code[$i] == ';' && $code[$i + 2] != '}'){
 					$fin = "\n";
 				}
 				if($code[$i] == '{'){
 					$fin = "\n";
 				}
-				if($code[$i] == '}'){
-					$pre = "\n";
+				if($code[$i] == '}' && $code[$i + 1] != ','){
 					$fin = "\n";
 				}
 				if($code[$i] == '/' && $code[$i + 1] == '*'){
 					$pre = "\n";
 				}
-				if($code[$i] == '*' && $code[$i - 1] == '/'){
+				if($code[$i] == '*' && $code[$i - 1] == '*' && $code[$i - 2] == '/'){
 					$fin = "\n";
 				}
 				if($code[$i] == '*' && $code[$i + 1] == '/'){
@@ -328,7 +351,8 @@
 				$tab = $next;
 			}
 
-			return preg_replace('/\s+$/m', '', $res);
+			//return preg_replace('/\s+$/m', '', $res);
+			return $res;
 		}
 		/**
 		 * @param int $length
@@ -348,14 +372,8 @@
 
 		// result
 		public function generate(){
-			$code = '
-			<?
-				/*
-					generated by codegen v' . $this -> version . '
-				*/
-			';
+			$code = '<?';
 
-			$code .= $this -> generate_function();
 			$code .= $this -> generate_class();
 			$code .= PHP_EOL . '?>';
 

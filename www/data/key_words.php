@@ -1,13 +1,13 @@
 <?
 	$key_words = [
 		'type' => [ // 'count'
-			'item', 'param', 'set', 'settings', 'ansver', 'foo', 'bar', 'baz', 'stuff', 'elm', 'element', 'type', 'status', 'label', 'case', 'mode', 'key'
+			'item', 'param', 'set', 'settings', 'answer', 'foo', 'bar', 'baz', 'stuff', 'elm', 'element', 'type', 'status', 'label', 'case', 'mode', 'key', 'type', 'mode'
 		],
 		'title' => [
-			'name', 'category', 'title', 'description', 'user', 'parent', 'section', 'act', 'person', 'position'
+			'name', 'category', 'title', 'header', 'paragraph', 'description', 'user', 'parent', 'section', 'act', 'person', 'position'
 		],
 		'content' => [
-			'content', 'html', 'template', 'tpl', 'result', 'data', 'text', 'val', 'value', 'word', 'rule', 'list', 'leaf'
+			'content', 'html', 'template', 'tpl', 'result', 'data', 'text', 'val', 'value', 'word', 'rule', 'list', 'leaf', 'code', 'block'
 		],
 		'result' => [
 			'ret', 'out', 'output', 'res', 'result', 'temp', 'tmp', 'content', 'cnt'
@@ -23,6 +23,7 @@
 		]
 	];
 
-	// 'string', 'str', 'obj', 'arr',
+	// dont used: 'string', 'str', 'obj', 'arr',
 	// file folder dir path cd fp
+
 ?>
