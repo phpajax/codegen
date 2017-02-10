@@ -64,10 +64,10 @@
 		// vars
 		/**
 		 * @param string $name
-		 * @param string $simple
+		 * @param boolean $scalar
 		 * @return array $value - variable: [name, type, value]
 		 */
-		public function generate_variable($name = '', $simple = false){
+		public function generate_variable($name = '', $scalar = false){
 			$variable = [];
 			$variable['name'] = $name;
 
@@ -83,8 +83,8 @@
 				$type = $type[mt_rand(0, count($type) - 1)];
 			}
 
-			if($simple && in_array($type, ['array', 'object'])){
-				return $this -> generate_variable($name, $simple);
+			if($scalar && in_array($type, ['array', 'object'])){
+				return $this -> generate_variable($name, $scalar);
 			}
 
 			$variable['type'] = $type;
@@ -357,7 +357,6 @@
 				$tab = $next;
 			}
 
-			//return preg_replace('/\s+$/m', '', $res);
 			return $res;
 		}
 		/**
