@@ -1,4 +1,4 @@
-<?
+<?php
 	$default_values = [
 		'string' => ['', '?', '*', '!!!', 'default', 'nothing', 'not found', 300],
 		'integer' => [0, -1, 100, -0, 300],

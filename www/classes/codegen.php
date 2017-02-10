@@ -1,4 +1,4 @@
-<?
+<?php
 	class codegen{
 		/** @var double version */
 		var $version = 0.02;

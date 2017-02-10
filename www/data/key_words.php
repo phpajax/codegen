@@ -1,4 +1,4 @@
-<?
+<?php
 	$key_words = [
 		'type' => [ // 'count'
 			'item', 'param', 'set', 'settings', 'answer', 'foo', 'bar', 'baz', 'stuff', 'elm', 'element', 'type', 'status', 'label', 'case', 'mode', 'key', 'type', 'mode'

@@ -1,4 +1,4 @@
-<?
+<?php
 	$variables_relations = [ // content <- data
 		'integer^integer' => [
 			'{c} = {d} ++', '{c} = {d} --', '{c} = {d} * {d}', '{c} = {d} / {d}', '{c} = {d} & 1', '{c} = {d} ^ 8', '{c} = {d} % 2', '{c} = pow(2, {d})'
