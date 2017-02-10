@@ -64,9 +64,10 @@
 		// vars
 		/**
 		 * @param string $name
+		 * @param string $simple
 		 * @return array $value - variable: [name, type, value]
 		 */
-		public function generate_variable($name = ''){
+		public function generate_variable($name = '', $simple = false){
 			$variable = [];
 			$variable['name'] = $name;
 
@@ -81,6 +82,11 @@
 				$type = array_keys($this -> default_values);
 				$type = $type[mt_rand(0, count($type) - 1)];
 			}
+
+			if($simple && in_array($type, ['array', 'object'])){
+				return $this -> generate_variable($name, $simple);
+			}
+
 			$variable['type'] = $type;
 
 
@@ -172,13 +178,13 @@
 				$new = $new < count($args) ? count($args) : $new;
 
 				for($i = 0; $i < $new; $i ++){
-					$variables[] = $this -> generate_variable($this -> generate_name($var_types[mt_rand(0, count($var_types) - 1)], 0, $variables));
+					$variables[] = $this -> generate_variable($this -> generate_name($var_types[mt_rand(0, count($var_types) - 1)], 0, $variables), true);
 				}
 			}
 
 			// class variables inserting
 			foreach($this -> variables as $var){
-				$var['name'] = 'this -> ' . $var['name'];
+				$var['name'] = 'this -> $' . $var['name'];
 				$variables[] = $var;
 			}
 
@@ -263,7 +269,7 @@
 
 			// methods of class
 			$code .= $this -> generate_function(3);
-			$new = mt_rand(2, 4);
+			$new = mt_rand(2, 5);
 			for($i = 0; $i < $new; $i ++){
 				$code .= $this -> generate_function();
 			}
