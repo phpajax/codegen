@@ -433,7 +433,7 @@
 
 			// methods of class
 			$code .= $this -> generate_function(3);
-			$new = mt_rand(2, 5);
+			$new = mt_rand(3, 7);
 			for($i = 0; $i < $new; $i ++){
 				$code .= $this -> generate_function();
 			}
