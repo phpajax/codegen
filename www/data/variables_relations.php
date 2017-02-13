@@ -228,7 +228,7 @@
 	$variables_relations['array^string^double'] =& $variables_relations['array^string^integer'];
 	$variables_relations['array^string^array'] = reverse($variables_relations['array^array^string']);
 	$variables_relations['array^string^object'] =& $variables_relations['array^object^string'];
-	$variables_relations['array^string^string'] = ['{c} = [{d}, {e}]', '{c} = [{d} @+ {e}]'];
+	$variables_relations['array^string^string'] = ['{c} = [{d}, {e}]', '{c} = [{d} . {e}]'];
 
 
 
