@@ -242,11 +242,6 @@
 
 
 
-
-
-
-
-
 			// relations
 			/*
 			 * arguments >= 1
@@ -257,8 +252,6 @@
 			 * 	$variables <--- ?$arguments(1,2) | ?$properties(5,6) | ?$variables from $stack $ready (10,11)
 			 *  $variables ---> ?$properties | ?return
 			 */
-
-
 
 			$used = $used_names = $last_var = $inp_pool = [];
 			$_variables = $variables;
@@ -338,8 +331,6 @@
 				}
 
 				if(!count($_variables) && count($variables)){ // finally
-				//	shuffle($variables);
-
 					/*
 					 * V1 NV1 RV1
 					 * V2
@@ -377,21 +368,8 @@
 
 
 
-
-
-			//
-			//	$code .= $this -> generate_variables_relations($variables[$i - 1], $variables[$i]);
-			// $code .= $this -> generate_variables_relations($variables[$i], $variables[$i + 1], $variables[$i + 2]);
-			// little magic
-			//
-
-
 			// return last var
 			$code .= PHP_EOL . 'return $' . $last_var['name'] . ';';
-
-
-			// $value = mt_rand(0, 1) ? $this -> generate_random_string() : mt_rand(0, 999999);
-			// $code = '"return ' . $value . '";';
 
 
 
@@ -410,12 +388,11 @@
 				$doc .= PHP_EOL . '* @prop ' . $properties[$i]['type'] . ' $' . $properties[$i]['name'];
 			}
 			$doc .= PHP_EOL . '* @return ' . $last_var['type'] . ' $' . $last_var['name'];
-			//
 
 
 
+			// print
 			$code = PHP_EOL . '/**' . $doc . PHP_EOL . '*/' . 'function ' . $name . '(' . $arguments_str . '){' . PHP_EOL . $code . PHP_EOL . '}';
-
 			return $code;
 		}
 
