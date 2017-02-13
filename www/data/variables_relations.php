@@ -306,5 +306,5 @@
 	$variables_relations['string^string^double'] =& $variables_relations['string^string^integer'];
 	$variables_relations['string^string^array'] = reverse($variables_relations['string^array^string']);
 	$variables_relations['string^string^object'] = reverse($variables_relations['string^object^string']);
-	$variables_relations['string^string^string'] = ['{c} = {d} @+ {e}', '{c} = {d} . {e}'];
+	$variables_relations['string^string^string'] = ['{c} = {d} . {e}', '{c} = str_replace({d}, "", {e})'];
 ?>
