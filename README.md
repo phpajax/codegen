@@ -7,6 +7,7 @@
 - when the work is not yet done and need something to show...
 - when you want to try code-skills your friend...
 - And more to fun :D
+- if you`re cant come up new name for variable or function
 
 ##* You can use it free.
 

@@ -1,7 +1,7 @@
 <?php
 	$key_words = [
-		'type' => [ // 'count'
-			'item', 'param', 'set', 'settings', 'answer', 'foo', 'bar', 'baz', 'stuff', 'elm', 'element', 'type', 'status', 'label', 'case', 'mode', 'key', 'type', 'mode'
+		'type' => [
+			'item', 'param', 'set', 'settings', 'answer', 'foo', 'bar', 'baz', 'zoo', 'stuff', 'elm', 'element', 'type', 'status', 'label', 'case', 'mode', 'key', 'type', 'mode', 'pos'
 		],
 		'title' => [
 			'name', 'category', 'title', 'header', 'paragraph', 'description', 'user', 'parent', 'section', 'act', 'person', 'position'
@@ -20,10 +20,14 @@
 		],
 		'globals' => [
 			'test', 'start', 'super', 'big', 'work', 'lib', 'project', 'store'
-		]
+		],
+		'temp' => [
+			'cdr', 'vrd', 'bnc', 'abc', 'ssd', 'css', 'php', 'png', 'jpg', 'gif', 'bmp', 'svd', 'mmo', 'rpg', 'web', 'rom', 'bus', 'tip', 'bip', 'zip', 'lib', 'aol', 'icq', 'pwd',
+		    'drv', 'fem', 'npm', 'vcs', 'scp', 'gdd', 'zzz', 'hex', 'bid', 'dec', 'oct', 'mob', 'xor', 'tel', 'cpu', 'ddr', 'lcd', 'nzt'
+	    ]
 	];
 
-	// dont used: 'string', 'str', 'obj', 'arr',
+	// dont used: 'string', 'str', 'obj', 'arr', 'count'
 	// file folder dir path cd fp
 
 ?>
