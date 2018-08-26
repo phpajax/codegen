@@ -1,7 +1,7 @@
 <?php
 	class codegen{
 		/** @var double version */
-		var $version = 0.04;
+		var $version = 0.05;
 		/** @var string name_separator */
 		var $name_separator = '_';
 		/** @var array variables */
@@ -214,14 +214,13 @@
 			// function variables generate
 			$variables = [];
 			$var_types = ['result', 'content'];
-			$new = mt_rand(1, 5);
+			$new = mt_rand(1, 3);
 			if($new){
 				$new = $new < $count_arguments + 1 ? $count_arguments + 1 : $new;
 				for($i = 0; $i < $new; $i ++){
 					$variables[] = $this -> generate_variable($this -> generate_name($var_types[mt_rand(0, count($var_types) - 1)], 0, array_merge($variables, $this -> variables, $arguments)), true);
 				}
 			}
-			$count_variables = count($variables);
 
 
 
@@ -378,14 +377,14 @@
 			for($i = 0; $i < $count_arguments; $i ++){
 				$doc .= PHP_EOL . '* @param ' . $arguments[$i]['type'] . ' $' . $arguments[$i]['name'];
 			}
-			for($i = 0; $i < $count_variables; $i ++){
-				$doc .= PHP_EOL . '* @var ' . $variables[$i]['type'] . ' $' . $variables[$i]['name'];
-			}
-			for($i = 0; $i < count($inp_pool); $i ++){
-				$doc .= PHP_EOL . '* @var ' . $inp_pool[$i]['type'] . ' $' . $inp_pool[$i]['name'];
-			}
+			// for($i = 0; $i < $count_variables; $i ++){
+			// 	$doc .= PHP_EOL . '* @var ' . $variables[$i]['type'] . ' $' . $variables[$i]['name'];
+			// }
+			// for($i = 0; $i < count($inp_pool); $i ++){
+			// 	$doc .= PHP_EOL . '* @var ' . $inp_pool[$i]['type'] . ' $' . $inp_pool[$i]['name'];
+			// }
 			for($i = 0; $i < $count_properties; $i ++){
-				$doc .= PHP_EOL . '* @prop ' . $properties[$i]['type'] . ' $' . $properties[$i]['name'];
+				$doc .= PHP_EOL . '* @use ' . $properties[$i]['type'] . ' $' . $properties[$i]['name'];
 			}
 			$doc .= PHP_EOL . '* @return ' . $last_var['type'] . ' $' . $last_var['name'];
 
@@ -406,7 +405,7 @@
 			$code .= 'class ' . $name . '{';
 
 			// vars of class
-			$new = mt_rand(2, 5);
+			$new = mt_rand(3, 5);
 			for($i = 0; $i < $new; $i ++){
 				$this -> variables[] = $this -> generate_variable($this -> generate_name('content', 0, $this -> variables));
 			}
@@ -425,7 +424,7 @@
 			};
 			// declaration of variables
 			foreach($this -> variables as $var){
-				$code .= PHP_EOL . '/** $var ' . $var['type'] . ' ' . $var['name'] . ' */';
+				$code .= PHP_EOL . '/** * @var ' . $var['type'] . ' $' . $var['name'] . ' */';
 				$code .= 'var $' . $var['name'] . $get_quotes($var) . ';';
 			}
 
@@ -433,9 +432,11 @@
 
 			// methods of class
 			$code .= $this -> generate_function(3);
-			$new = mt_rand(3, 7);
+			$new = mt_rand(4, 7);
 			for($i = 0; $i < $new; $i ++){
+				$code .= PHP_EOL;
 				$code .= $this -> generate_function();
+				$code .= PHP_EOL;
 			}
 
 			return $code . '}';

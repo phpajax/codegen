@@ -39,15 +39,15 @@
 	$variables_relations['boolean^object'] = ['{c} = is_subclass_of({d}, "system")', '{c} = is_a({d}, "system")', '{c} = method_exists({d}, "name")'];
 
 
-	$variables_relations['array^string'] = ['{c} = str_split(base64_encode({d}))', '{c} = explode(",", {d})', '{c} = str_split({d})', 'parse_str({d}, {c})', '{c} = count_chars({d})'];
+	$variables_relations['array^string'] = ['{c} = str_split(base64_encode({d}))', '{c} = explode(",", {d})', '{c} = str_split({d})', '{c} = parse_str({d})', '{c} = count_chars({d})', '{c} = preg_split("//u", {d});'];
 	$variables_relations['array^integer'] = ['{c} = (array) {d}', '{c} = range(1, {d})'];
 	$variables_relations['array^boolean'] = ['{c} = (array) {d}', '{c} = {d} ? [0] : [1]'];
 	$variables_relations['array^array'] = ['{c} += {d}', '{c} = {d} @+ {d}', '{c} = {d} @& {d}'];
-	$variables_relations['array^object'] = ['{c} = (array) {d}', '{c} = {d} -> $data'];
+	$variables_relations['array^object'] = ['{c} = (array) {d}', '{c} = {d} -> $data', '{c} = json_decode(json_encode({d}))'];
 
 
 	$variables_relations['object^string'] = ['{c} = new {d}', '{c} = (object) {d}'];
-	$variables_relations['object^integer'] = ['{c} = (object) {d}', '{c} = new ${"obj_" . {d}}'];
+	$variables_relations['object^integer'] = ['{c} = get_result({d})', '{c} = new ${"obj_" . {d}}'];
 	$variables_relations['object^boolean'] = ['{c} = {d} ? new stdClass() : $this', '{c} = (object) {d}'];
 	$variables_relations['object^array'] = ['{c} = (object) {d}', '{c} = {d}["value"]'];
 	$variables_relations['object^object'] = ['{c} = {d} -> $parent', '{c} = {d} -> $value'];
@@ -107,7 +107,7 @@
 	$variables_relations['boolean^string^double'] =& $variables_relations['boolean^string^integer'];
 	$variables_relations['boolean^string^array'] = reverse($variables_relations['boolean^array^string']);
 	$variables_relations['boolean^string^object'] = reverse($variables_relations['boolean^object^string']);
-	$variables_relations['boolean^string^string'] = ['{c} = {d} @> {e}', '{c} = strlen({d}) @> strlen({e})', '{c} = crc32({d}) @> crc32({e})'];
+	$variables_relations['boolean^string^string'] = ['{c} = {d} @> {e}', '{c} = strlen({d}) @> strlen({e})', '{c} = src32({d}) @> src32({e})', '{c} = preg_match({e}, {d})'];
 
 
 
@@ -135,21 +135,21 @@
 	$variables_relations['integer^array^array'] = ['{c} = count({d}) @+ count({e})', '{c} = array_sum({d}) @+ array_sum({e})', '{c} = array_sum(array_keys({d})) @+ array_sum(array_keys({e}))'];
 	$variables_relations['integer^array^object'] = ['{c} = array_sum({d}) @+ array_sum((array) {e})', '{c} = count({d}) @+ count((array) {e})'];
 	$variables_relations['integer^array^string'] = [
-		'{c} = count({d}) @+ count(str_split(base64_encode({e})))', '{c} = count({d}) @+ count(explode(",", {e}))', '{c} = count({d}) @+ strlen({e})', '{c} = count({d}) @+ count(explode(",", {e}))', '{c} = count({d}) @+ count_chars({e})'
+		'{c} = count({d}) @+ count(str_split(base64_encode({e})))', '{c} = count({d}) @+ count(explode(",", {e}))', '{c} = count({d}) @+ strlen({e})', '{c} = count({d}) @+ count(parse_str({e}))', '{c} = count({d}) @+ count_chars({e})'
 	];
 	$variables_relations['integer^object^boolean'] = reverse($variables_relations['integer^boolean^object']);
 	$variables_relations['integer^object^integer'] = ['{c} = count(get_object_vars({d})) @+ {e}'];
 	$variables_relations['integer^object^double'] =& $variables_relations['integer^object^integer'];
 	$variables_relations['integer^object^array'] = reverse($variables_relations['integer^array^object']);
 	$variables_relations['integer^object^object'] = ['{c} = count(get_object_vars({d})) @+ count(get_object_vars({e}))'];
-	$variables_relations['integer^object^string'] = ['{c} = crc32(get_class({d}) . {e})', '{c} = strlen(get_parent_class({d}) . {e})', '{c} = strlen(md5({e}) . sha1(get_object_vars({d})))'];
+	$variables_relations['integer^object^string'] = ['{c} = crc32(get_class({d}) . {e})', '{c} = strlen(get_parent_class({d}) . {e})', '{c} = strlen(md5({e}) . sha1(get_object_vars({d}))'];
 	$variables_relations['integer^string^boolean'] = reverse($variables_relations['integer^boolean^string']);
 	$variables_relations['integer^string^integer'] = reverse($variables_relations['integer^integer^string']);
 	$variables_relations['integer^string^double'] =& $variables_relations['integer^string^integer'];
 	$variables_relations['integer^string^array'] = reverse($variables_relations['integer^array^string']);
 	$variables_relations['integer^string^object'] = reverse($variables_relations['integer^object^string']);
 	$variables_relations['integer^string^string'] = [
-		'{c} = crc32({d}) @+ crc32({e})', '{c} = strlen({d}) @+ strlen({e})', '{c} = intval({d}) @+ intval({e})', '{c} = array_sum(array_map(function($s){return ord($s);}, str_split({d}))) @+ array_sum(array_map(function($s){return ord($s);}, str_split({e})))', '{c} = ord({d}[0]) @+ ord({e}[0])', '{c} = str_word_count({d}) @+ str_word_count({e})'
+		'{c} = crc32({d}) @+ crc32({e})', '{c} = strlen({d}) @+ strlen({e})', '{c} = intval({d}) @+ intval({e})', '{c} = array_sum(array_map(function($s){return ord($s);}, str_split({d}))) @+ array_sum(array_map(function($s){return ord($s);}, str_split({e})))', '{c} = ord({d}[0]) @+ ord({e}[0])', '{c} = str_word_count({d}) @+ str_word_count({e})', '{c} = preg_match({e}, {d})'
 	];
 
 
@@ -197,13 +197,13 @@
 	$variables_relations['array^boolean^integer'] = ['{c} = [{d}, {e}]', '{c} = {d} ? [{e}] : [{d}]', '{c} = (array) {d} @& {e}'];
 	$variables_relations['array^boolean^double'] =& $variables_relations['array^boolean^integer'];
 	$variables_relations['array^boolean^array'] = ['{c} = array_push({e}, {d})', '{c} = {d} ? array_reverse({e}) : {e}'];
-	$variables_relations['array^boolean^object'] = ['{c} = (array) {d} @+ (array) {e}', '{c} = {d} ? (array) {e} : [0]'];
-	$variables_relations['array^boolean^string'] = ['{c} = {d} ? str_split({e}) : 0', '{c} = explode({d}, {e})', '{c} = [{d}, {e}]', '{c} = (array) ({d} @+ {e})'];
+	$variables_relations['array^boolean^object'] = ['{c} = (array) {d} @+ {array} {e}', '{c} = {d} ? {array} {e} : [0]'];
+	$variables_relations['array^boolean^string'] = ['{c} = implode({d}, str_split({e}));', '{c} = array_sum(array_map(function($s){return ord($s);}, {e}) @& {d}', '{c} = [{d}, {e}]', '{c} = (array) ({d} @+ {e})'];
 	$variables_relations['array^integer^boolean'] = reverse($variables_relations['array^boolean^integer']);
-	$variables_relations['array^integer^integer'] = ['{c} = range({d}, {e})', '{c} = range(1, {d} @+ {e})', '{c} = [{d}, {e}]'];
+	$variables_relations['array^integer^integer'] = ['{c} = range({d}, {e})', '{c} = range({d} @+ {e})', '{c} = [{d}, {e}]'];
 	$variables_relations['array^integer^double'] =& $variables_relations['array^integer^integer'];
 	$variables_relations['array^integer^array'] = ['{c} = array_rand({e}) @& {d}', '{c} = array_slice({e}, {d})', '{c} = {e}[{d}]', '{c} = array_chunk({e}, {d})'];
-	$variables_relations['array^integer^object'] = ['{c} = {d} > 8 ? (array) {e} : [0]'];
+	$variables_relations['array^integer^object'] = ['{c} = {d} > 8 (array) {e} : [0]'];
 	$variables_relations['array^integer^string'] = ['{c} = [{d}, {e}]', '{c} = explode({d}, {e})', '{c} = str_split({e}, {d})', '{c} = (array) {d} @+ strlen({e})'];
 	$variables_relations['array^double^boolean'] =& $variables_relations['array^integer^boolean'];
 	$variables_relations['array^double^integer'] =& $variables_relations['array^integer^integer'];
@@ -228,8 +228,7 @@
 	$variables_relations['array^string^double'] =& $variables_relations['array^string^integer'];
 	$variables_relations['array^string^array'] = reverse($variables_relations['array^array^string']);
 	$variables_relations['array^string^object'] =& $variables_relations['array^object^string'];
-	$variables_relations['array^string^string'] = ['{c} = [{d}, {e}]', '{c} = [{d} . {e}]'];
-
+	$variables_relations['array^string^string'] = ['{c} = [{d}, {e}]', '{c} = [{d} . {e}]', 'preg_match_all({e}, {d}, {c})'];
 
 
 	$variables_relations['object^boolean^boolean'] = ['{c} = (object) ({d} @& {e})'];
@@ -243,7 +242,7 @@
 	$variables_relations['object^integer^double'] =& $variables_relations['object^integer^integer'];
 	$variables_relations['object^integer^array'] = ['{c} = new {e}[{d}]', '{c} = (object) {e}[{d}]'];
 	$variables_relations['object^integer^object'] = ['{c} = (object) ({d} @+ {e})', '{c} = {e} -> {d} = {e}'];
-	$variables_relations['object^integer^string'] = ['{c} = (object) ({d} . {e})'];
+	$variables_relations['object^integer^string'] = ['{c} = (object) ({d} @+ {e})'];
 	$variables_relations['object^double^boolean'] =& $variables_relations['object^integer^boolean'];
 	$variables_relations['object^double^integer'] =& $variables_relations['object^integer^integer'];
 	$variables_relations['object^double^double'] =& $variables_relations['object^integer^integer'];
@@ -267,7 +266,7 @@
 	$variables_relations['object^string^double'] =& $variables_relations['object^string^integer'];
 	$variables_relations['object^string^array'] = reverse($variables_relations['object^array^string']);
 	$variables_relations['object^string^object'] = reverse($variables_relations['object^object^string']);
-	$variables_relations['object^string^string'] = ['{c} = (object) [{d}, {e}]'];
+	$variables_relations['object^string^string'] = ['{c} = (object) [{d}, {e}]', '{c} = create_function({d}, {e})'];
 
 
 
@@ -276,13 +275,13 @@
 	$variables_relations['string^boolean^double'] =& $variables_relations['string^boolean^integer'];
 	$variables_relations['string^boolean^array'] = ['{c} = {e}[{d}]', '{c} = (string) ({d} @& {e})', '{c} = implode({d}, {e})'];
 	$variables_relations['string^boolean^object'] = ['{c} = (string) ({d} @& {e})'];
-	$variables_relations['string^boolean^string'] = ['{c} = (string) ({d} . {e})'];
+	$variables_relations['string^boolean^string'] = ['{c} = (string) ({d} @& {e})'];
 	$variables_relations['string^integer^boolean'] = ['{c} = (string) ({d} @& {e})'];
 	$variables_relations['string^integer^integer'] = ['{c} = (string) ({d} @+ {e})', '{c} = (string) pow({d}, {e})'];
 	$variables_relations['string^integer^double'] =& $variables_relations['string^integer^integer'];
 	$variables_relations['string^integer^array'] = ['{c} = (string) ({d} @& {e})'];
 	$variables_relations['string^integer^object'] = ['{c} = {e} -> {d}', '{c} = (string) {d} @& {e}', '{c} = var_export({d}, true) . var_export({e}, true)'];
-	$variables_relations['string^integer^string'] = ['{c} = {d} . {e}', '{c} = str_repeat({e}, {d})'];
+	$variables_relations['string^integer^string'] = ['{c} = {d} @+ {e}', '{c} = str_repeat({e}, {d})'];
 	$variables_relations['string^double^boolean'] =& $variables_relations['string^integer^boolean'];
 	$variables_relations['string^double^integer'] =& $variables_relations['string^integer^string'];
 	$variables_relations['string^double^double'] =& $variables_relations['string^integer^double'];
@@ -292,15 +291,15 @@
 	$variables_relations['string^array^boolean'] = reverse($variables_relations['string^boolean^array']);
 	$variables_relations['string^array^integer'] = reverse($variables_relations['string^integer^array']);
 	$variables_relations['string^array^double'] =& $variables_relations['string^array^integer'];
-	$variables_relations['string^array^array'] = ['{c} = implode(",", {d}) . implode(",", {e})'];
-	$variables_relations['string^array^object'] = ['{c} = implode(",", {d}) . implode(",", (array) {e})'];
-	$variables_relations['string^array^string'] = ['{c} = implode(",", {d}) . {e}'];
+	$variables_relations['string^array^array'] = ['{c} = implode("", {d}) . implode("", {e})'];
+	$variables_relations['string^array^object'] = ['{c} = implode("", {d}) . implode("", (array) {e})'];
+	$variables_relations['string^array^string'] = ['{c} = implode("", {d}) . {e}'];
 	$variables_relations['string^object^boolean'] = reverse($variables_relations['string^boolean^object']);
 	$variables_relations['string^object^integer'] = reverse($variables_relations['string^integer^object']);
 	$variables_relations['string^object^double'] =& $variables_relations['string^object^integer'];
 	$variables_relations['string^object^array'] = reverse($variables_relations['string^array^object']);
-	$variables_relations['string^object^object'] = ['{c} = implode(",", (array) {d}) . implode(",", (array) {e})'];
-	$variables_relations['string^object^string'] = ['{c} = implode(",", (array) {d}) . {e}'];
+	$variables_relations['string^object^object'] = ['{c} = implode("", (array) {d}) . implode("", (array) {e})'];
+	$variables_relations['string^object^string'] = ['{c} = implode("", (array) {d}) . {e}'];
 	$variables_relations['string^string^boolean'] = reverse($variables_relations['string^boolean^string']);
 	$variables_relations['string^string^integer'] = reverse($variables_relations['string^integer^string']);
 	$variables_relations['string^string^double'] =& $variables_relations['string^string^integer'];
